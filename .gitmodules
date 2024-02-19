@@ -1,0 +1,6 @@
+[submodule "todo_back"]
+	path = todo_back
+	url = https://github.com/hackathon2024winter/todo_back
+[submodule "todo_front"]
+	path = todo_front
+	url = https://github.com/hackathon2024winter/todo_front
