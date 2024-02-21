@@ -1,0 +1,18 @@
+name: Submodule Update on Dispatch
+
+on:
+  repository_dispatch:
+    types: [submodule-updated]
+
+jobs:
+  update-submodule:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v2
+
+      - name: Update Submodules
+        run: |
+          git submodule update --remote --recursive
+          git commit -am "Automatically updated submodules"
+          git push
