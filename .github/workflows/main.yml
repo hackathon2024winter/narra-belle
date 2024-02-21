@@ -1,5 +1,4 @@
 name: Submodule Update on Dispatch
-
 on:
   repository_dispatch:
     types: [submodule-updated]
