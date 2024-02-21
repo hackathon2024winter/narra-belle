@@ -1,0 +1,93 @@
+version: "3.9"
+services:
+  nginx:
+    build:
+      context: ./todo_nginx
+    restart: always
+    depends_on:
+      - reactapp
+    volumes:
+      - ./todo_nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./todo_nginx/log:/var/log/nginx
+    networks:
+      - narra_belle_network
+    ports:
+      - 80:80
+
+  reactapp:
+    build:
+      context: ./todo_front
+      args:
+        - MY_UID=${MY_UID}
+        - MY_GID=${MY_GID}
+        - PORT_VITE=${PORT_VITE}
+    networks:
+      - narra_belle_network
+    env_file:
+      - .env
+    volumes:
+      - ./todo_front:/home/appuser/devcon
+    # ports:
+    #   - ${PORT_WEB}:${PORT_WEB}
+    expose:
+      - ${PORT_VITE}
+    command: ["/bin/bash", "-c", "/home/appuser/devcon/build.sh"]
+
+  fastapi:
+    build:
+      context: ./todo_back/apis
+      args:
+        - MY_UID=${MY_UID}
+        - MY_GID=${MY_GID}
+        - PORT_FAST=${PORT_FAST}
+    volumes:
+      - ./todo_back:/home/appuser/devcon
+    env_file:
+      - .env
+    networks:
+      - narra_belle_network
+    # ports:
+    #   - ${PORT_MICRO1}:${PORT_MICRO1}
+    expose:
+      - ${PORT_FAST}
+    command: ["/bin/sh", "-c", "/home/appuser/devcon/build.sh"]
+
+  mysql_fast:
+    build:
+      context: ./todo_back/mysql
+      args:
+        - PORT_MYSQL_FAST=${PORT_MYSQL_FAST}
+        - MYSQL_USER=${MYSQL_USER}
+    volumes:
+      - ./todo_back/mysql/data/db:/var/lib/mysql/${MYSQL_DB_FAST}
+    environment:
+      - TZ=Asia/Tokyo
+    env_file:
+      - .env
+    networks:
+      - narra_belle_network
+    ports:
+      - ${PORT_MYSQL_FAST}:${PORT_MYSQL_FAST}
+
+  pma_fast:
+    build:
+      context: ./todo_back/phpmyadmin
+      args:
+        PORT_PMA_FAST: ${PORT_PMA_FAST}
+    env_file:
+      - .env
+    networks:
+      - narra_belle_network
+    environment:
+      PMA_HOST: ${MYSQL_HOST_FAST}
+      PMA_PORT: ${PORT_MYSQL_FAST}
+    # expose:
+    #   - ${PORT_PMA_FAST}
+    ports:
+      - ${PORT_PMA_FAST}:${PORT_PMA_FAST}
+    volumes:
+      - ./todo_back/phpmyadmin/sessions:/sessions    
+
+networks:
+  narra_belle_network:
+    name: narra_belle_network
