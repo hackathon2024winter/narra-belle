@@ -11,8 +11,14 @@ jobs:
       - name: Checkout the repository
         uses: actions/checkout@v2
 
+      - name: Set up Git identity
+        run: |
+          git config --global user.name "hackathon2024winter"
+          git config --global user.email "hackathon2024winter@gmail.com"
+
       - name: Update Submodules
         run: |
           git submodule update --remote --recursive
-          git commit -am "Automatically updated submodules"
+          git add .
+          git commit -m "Automatically updated submodules"
           git push
