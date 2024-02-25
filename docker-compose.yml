@@ -66,8 +66,10 @@ services:
       - .env
     networks:
       - narra_belle_network
-    ports:
-      - ${PORT_MYSQL_FAST}:${PORT_MYSQL_FAST}
+    # ports:
+    #   - ${PORT_MYSQL_FAST}:${PORT_MYSQL_FAST}
+    expose:
+      - ${PORT_MYSQL_FAST}
 
   pma_fast:
     build:
@@ -81,10 +83,10 @@ services:
     environment:
       PMA_HOST: ${MYSQL_HOST_FAST}
       PMA_PORT: ${PORT_MYSQL_FAST}
-    # expose:
-    #   - ${PORT_PMA_FAST}
-    ports:
-      - ${PORT_PMA_FAST}:${PORT_PMA_FAST}
+    # ports:
+    #   - ${PORT_PMA_FAST}:${PORT_PMA_FAST}
+    expose:
+      - ${PORT_PMA_FAST}
     volumes:
       - ./todo_back/phpmyadmin/sessions:/sessions    
 
